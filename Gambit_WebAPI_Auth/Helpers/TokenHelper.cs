@@ -1,9 +1,8 @@
 ﻿using Gambit_WebAPI_Auth.Domain.Models;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
+using System.Security.Cryptography;
 
 namespace Gambit_WebAPI_Auth.Helpers
 {
@@ -25,9 +24,9 @@ namespace Gambit_WebAPI_Auth.Helpers
             ];
 
             // Signing
-            string secret = config["JwtBearer:Secret"] ?? throw new Exception("No secret !");
-            SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
-            SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512);
+            RSA rsa = SecurityKeyHelper.LoadRsaKey(config["JwtBearer:PrivateKey"]!);
+            SecurityKey securityKey = new RsaSecurityKey(rsa);
+            SigningCredentials signingCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.RsaSha256);
 
             // Token
             JwtSecurityToken token = new JwtSecurityToken(
@@ -37,6 +36,7 @@ namespace Gambit_WebAPI_Auth.Helpers
                 expires: DateTime.Now.AddMinutes(config.GetValue<int>("JwtBearer:Expire")),
                 signingCredentials: signingCredentials
             );
+            token.Header.Add("kid", config["JwtBearer:KeyId"]!);
 
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
             return handler.WriteToken(token);
