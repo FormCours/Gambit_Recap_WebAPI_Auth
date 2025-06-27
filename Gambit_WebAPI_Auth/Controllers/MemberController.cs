@@ -2,6 +2,7 @@
 using Gambit_WebAPI_Auth.Contracts.Output;
 using Gambit_WebAPI_Auth.Domain.Models;
 using Gambit_WebAPI_Auth.Handlers;
+using Gambit_WebAPI_Auth.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,9 +15,11 @@ namespace Gambit_WebAPI_Auth.Controllers
     public class MemberController : ControllerBase
     {
         private readonly MemberHandler _memberHandler;
-        public MemberController(MemberHandler memberHandler)
+        private readonly TokenHelper _tokenHelper;
+        public MemberController(MemberHandler memberHandler, TokenHelper tokenHelper)
         {
             _memberHandler = memberHandler;
+            _tokenHelper = tokenHelper;
         }
 
         [HttpPost("login")]
@@ -25,7 +28,7 @@ namespace Gambit_WebAPI_Auth.Controllers
         public async Task<IActionResult> Login([FromBody] MemberLoginInput memberLogin)
         {
             Member member = await _memberHandler.Login(memberLogin);
-            string token = "Un manifique token prochainement ici";
+            string token = _tokenHelper.GenerateToken(member);
 
             return Ok(new MemberTokenOutput()
             {
@@ -38,7 +41,7 @@ namespace Gambit_WebAPI_Auth.Controllers
         public async Task<IActionResult> Register([FromBody] MemberRegisterInput memberRegister)
         {
             Member memberCreated = await _memberHandler.Register(memberRegister);
-            string token = "Un autre token prochainement ici";
+            string token = _tokenHelper.GenerateToken(memberCreated);
 
             return Ok(new MemberTokenOutput()
             {
