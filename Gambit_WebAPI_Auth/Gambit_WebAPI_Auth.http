@@ -1,0 +1,6 @@
+@Gambit_WebAPI_Auth_HostAddress = http://localhost:5196
+
+GET {{Gambit_WebAPI_Auth_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
