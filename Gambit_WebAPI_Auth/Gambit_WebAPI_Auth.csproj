@@ -7,11 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Isopoh.Cryptography.Argon2" Version="2.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\Gambit_WebAPI_Auth.Domain\Gambit_WebAPI_Auth.Domain.csproj" />
   </ItemGroup>
 
 </Project>
