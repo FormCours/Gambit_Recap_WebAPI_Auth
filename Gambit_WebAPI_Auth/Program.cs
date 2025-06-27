@@ -1,5 +1,6 @@
 using Gambit_WebAPI_Auth.Handlers;
 using Gambit_WebAPI_Auth.Helpers;
+using Gambit_WebAPI_Auth.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseJwks();
 app.UseAuthorization();
 
 app.MapControllers();
